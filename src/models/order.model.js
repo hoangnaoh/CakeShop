@@ -40,6 +40,8 @@ const orderSchema = new mongoose.Schema({
     address: String
   },
   
+  shippingFee: { type: Number, default: 0 },
+  
   note: String,
   
   qrCodeUrl: { type: String },

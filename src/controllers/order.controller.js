@@ -131,7 +131,7 @@ const checkOrderPaymentWithCasso = async (order) => {
 
 export const createOrder = async (req, res) => {
   try {
-    const { items, shippingAddress, paymentMethod, note, voucherCode, usePoints } = req.body;
+    const { items, shippingAddress, paymentMethod, note, voucherCode, usePoints, shippingFee = 0 } = req.body;
     
     if (!items || items.length === 0) {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
@@ -208,7 +208,8 @@ export const createOrder = async (req, res) => {
       await user.save();
     }
 
-    const totalAmount = totalAfterDiscount;
+    const feeNum = Number(shippingFee) || 0;
+    const totalAmount = totalAfterDiscount + feeNum;
     
     // Determine cashback percentage based on Rank
     let cashbackPercent = 0.05; // Bronze
@@ -254,6 +255,7 @@ export const createOrder = async (req, res) => {
       customer: req.user._id,
       items: orderItems,
       totalAmount,
+      shippingFee: feeNum,
       shippingAddress,
       paymentMethod,
       paymentStatus,
